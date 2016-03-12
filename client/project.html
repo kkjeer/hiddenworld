@@ -1,0 +1,265 @@
+<!--
+Katherine Kjeer
+CS 307 Final Project: Journey to the Hidden World
+A game in which users explore the Hidden World from the novel Dragon Shadow by Emily Kjeer,
+including archery training and sword training.
+
+December 19, 2014
+All code copyright © 2014 by Katherine Kjeer, all rights reserved.
+
+Dragon Shadow, The Seven Kingdoms, The Hidden World, all other locations, characters, etc. within copyright © 2013 by Emily Kjeer. 
+Used by permission. All rights reserved.
+
+project.html
+Contains the markup for the web page describing the project,
+  and the JavaScript code that runs the program and renders the scene.
+-->
+
+
+<head>
+    <title>The Hidden World</title>
+
+    <!--Sources-->
+    <!--Exterior libraries-->
+    <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script src="http://cs.wellesley.edu/~cs307/threejs/libs/three.min.js"></script>
+    <script src="http://cs.wellesley.edu/~cs307/threejs/libs/OrbitControls.js"></script>
+    <script src="TW_Select.js"></script>
+    <script src="tween_full.js"></script>
+    <script src="touchSwipe.js"></script>
+    <!--Additional kkjeer JavaScript files written for this project-->
+    <script src="utility_functions.js"></script>
+    <script src="event_handlers.js"></script>
+    <script src="hw_objects.js"></script>
+    <script src="archery_objects.js"></script>
+    <script src="sword_objects.js"></script>
+    <script src="TubeRadialGeometry.js"></script>
+    <script src="project_map_functions.js"></script>
+    <!--Fonts-->
+    <script type="text/javascript" src="bitstream_vera_sans_mono_roman.typeface.js"></script>
+    <script type="text/javascript" src="helvetiker.js"></script>
+    <!--Bootstrap-->
+    <link rel="stylesheet" href="bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="bootstrap/bootstrap-theme.min.css">
+    <script src="bootstrap/bootstrap.min.js"></script>
+    <!--Favicon-->
+    <link id="favicon" rel="shortcut icon" href="/Images/newHW.ico">
+
+    <!--Styling-->
+    <style>
+        body{
+          margin: 0;
+          background: linear-gradient(to right, #9AFF9A, #6BD265, #9AFF9A);
+        }
+        #scene-div {
+          height: 550px;
+          border: 5px solid #662f00;
+          background-color: #6BD265;
+          padding: 0px;
+        }
+        .instructions {
+          background-color: #9AFF9A;
+        }
+        .btnimage {
+          margin-right: 2px;
+          max-width: 25px;
+          max-height: 20px;
+          min-width: 20px;
+          min-height: 20px;
+        }
+        #top-instructions {
+          padding: 10px;
+          font-family: 'Papyrus', Helvetica, Serif;
+          font-size: 14px;
+        }
+        #top-buttons {
+          padding-top: 5px;
+          font-family: 'Papyrus', Helvetica, Serif;
+          font-size: 14px;
+        }
+        .mybtn {
+          margin-right: 5px;
+          margin-top: 1px;
+          margin-bottom: 1px;
+          background-color: hsl(28, 100%, 20%);
+          background-repeat: repeat-x;
+          filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#703400", endColorstr="#662f00");
+          background-image: -khtml-gradient(linear, left top, left bottom, from(#703400), to(#662f00));
+          background-image: -moz-linear-gradient(top, #703400, #662f00);
+          background-image: -ms-linear-gradient(top, #703400, #662f00);
+          background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #703400), color-stop(100%, #662f00));
+          background-image: -webkit-linear-gradient(top, #703400, #662f00);
+          background-image: -o-linear-gradient(top, #703400, #662f00);
+          background-image: linear-gradient(#703400, #662f00);
+          border-color: #662f00 #662f00 hsl(28, 100%, 19.5%);
+          color: #fff;
+          text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.03);
+          -webkit-font-smoothing: antialiased;
+        }
+        .mybtn:hover {
+          color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<!--Markup-->
+<div class="row instructions">
+  <div class="col-md-6 col-sm-6 instructions" id="top-instructions">
+    Welcome to the Hidden World! Here, the Dragon Shadows train to become the most skilled inhabitants
+    of the Seven Kingdoms. Click the buttons to tour the Hidden World or train in archery or sword-fighting.  
+  </div>
+  <div class="col-md-6 col-sm-6 instructions" id="top-buttons">
+    <button class='btn mybtn' id='tourButton' type='button'>
+      <img class='btnimage' src='Images/newHW.png' alt='hw'>Tour
+    </button>
+    <button class='btn mybtn' id='archeryButton' type='button'>
+      <img class='btnimage' src='Images/bowPic.png' alt='bow'>Archery training
+    </button> 
+    <button class='btn mybtn' id='swordButton' type='button'> 
+      <img class='btnimage' src='Images/swordPic.png' alt='sword'>Sword training
+    </button>
+    <button class='btn mybtn' id='resetButton' type='button'> 
+      <img class='btnimage' src='Images/initialHW.png' alt='reset'>Reset
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12 col-sm-12" id="scene-div"></div>
+</div>
+
+<!--JavaScript code-->
+<script type="text/javascript">
+//********GLOBALS********//
+//scene parameters
+var sceneParams = {
+  fovY: 100,
+  cameraX: 0,
+  cameraY: 0,
+  cameraZ: 10,
+  atX: 0,
+  atY: 0,
+  atZ: 0,
+  mapHeight: 200,
+  mapWidth: 250,
+  hwSize: 2000,
+  hwPlaneSize: 8000,
+  hwX: 0,
+  hwY: -500,
+  hwZ: -1200,
+  dummy: null
+};
+
+var hiddenWorldInstructions = "Welcome to the Hidden World! Here, the Dragon Shadows train " + 
+                              "to become the most skilled inhabitants of the Seven Kingdoms. " + 
+                              "Click the buttons to tour the Hidden World or train in archery or sword-fighting.";
+
+//positions of objects based on what view they should be in (front, back, or in view)
+var frontViewPosition = new THREE.Vector3(0, 0, sceneParams.hwPlaneSize);
+var backViewPosition = new THREE.Vector3(0, -0.5*sceneParams.hwSize, -2.25*sceneParams.hwSize);
+var inViewPosition = new THREE.Vector3(0, -0.25*sceneParams.hwSize, -0.6*sceneParams.hwSize);
+var hwPosition = new THREE.Vector3(-0.4*sceneParams.hwPlaneSize, -0.3*sceneParams.hwPlaneSize, -0.8*sceneParams.hwPlaneSize);
+var hwRotation = new THREE.Vector3(0, 0, 0);
+
+//scene, renderer, camera
+var scene = new THREE.Scene();
+var renderer = new THREE.WebGLRenderer();
+var camera = new THREE.PerspectiveCamera(sceneParams.fovY, $('#scene-div').width()/$('#scene-div').height(), 0.1, 4000);
+
+//background scene
+var backgroundScene = new THREE.Scene();
+var backgroundCamera = new THREE.Camera();
+
+//Hidden World background
+var texture = THREE.ImageUtils.loadTexture('Images/forest.png');
+var backgroundMaterial = new THREE.MeshBasicMaterial({map: texture});
+var backgroundMesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), backgroundMaterial);
+
+//global objects within the scene
+var hiddenWorld;
+var archeryCenter;
+var archeryTargets = [new BoxTarget(0.5*sceneParams.hwSize, 0.15*sceneParams.hwSize, 
+                                    0.15*sceneParams.hwSize, 0.1*sceneParams.hwSize, 
+                                    "target", new THREE.Vector3(0, 0, -0.25)),
+                      new TableTarget(0.22*sceneParams.hwSize, 0.4*sceneParams.hwSize, 0.05*sceneParams.hwSize, 
+                                      5, new THREE.Vector3(0.05, 0, -0.2)),
+                      new MovingTarget(0.1*sceneParams.hwSize, 0.1*sceneParams.hwSize, 0.1*sceneParams.hwSize,
+                                        new THREE.Vector3(-0.4, 0.5, -0.25))];
+var swordCenter;
+
+var mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+//********END GLOBALS********//
+
+//********FUNCTION DECLARATIONS********//
+function drawScene () {
+  //color and size the renderer
+  renderer.setClearColor($('#scene-div').css('background-color'));
+  renderer.setSize($("#scene-div").width(), $("#scene-div").height());
+
+  //position and point the camera
+  camera.position.set(sceneParams.cameraX, sceneParams.cameraY, sceneParams.cameraZ);
+  camera.lookAt(new THREE.Vector3(sceneParams.atX, sceneParams.atY, sceneParams.atZ));
+
+  //ambient light
+  var ambient = new THREE.AmbientLight(0xffffff);
+  scene.add(ambient);
+
+  //The Hidden World
+  hiddenWorld = new HiddenWorld(sceneParams.hwPlaneSize);
+  hiddenWorld.reset();
+  scene.add(hiddenWorld.frame);
+
+  //The archery center
+  var archeryBow = new Bow(0.25*sceneParams.hwSize, 0.06*sceneParams.hwSize, 0.009*sceneParams.hwSize, "red_wood", true);
+  archeryCenter = new ArcheryCenter(sceneParams.hwSize, archeryBow, archeryTargets[0]);
+  archeryCenter.frame.position.copy(backViewPosition);
+  scene.add(archeryCenter.frame);
+  archeryCenter.frame.traverse(function (object) {object.visible = false;});
+
+  //The sword center
+  var teacherSword = new Sword(0.5*sceneParams.hwSize, 0.05*sceneParams.hwSize, 0.005*sceneParams.hwSize, 0x00bfff, -1);
+  var studentSword = new Sword(0.5*sceneParams.hwSize, 0.05*sceneParams.hwSize, 0.005*sceneParams.hwSize, 0xff3030, 1);
+  var movePoints = {up: new THREE.Vector3(0, 0.75, 0),
+                    down: new THREE.Vector3(0, 0.1, 0),
+                    left: new THREE.Vector3(-0.25, 0.5, 0),
+                    right: new THREE.Vector3(0.25, 0.5, 0),
+                    cross: new THREE.Vector3(0, 0.5, 0),
+                    parry: new THREE.Vector3(0, 0.5, 0)};
+  swordCenter = new SwordCenter(sceneParams.hwSize, teacherSword, studentSword,
+                                new THREE.Vector3(-0.25, 0.25, -0.1), new THREE.Vector3(0.25, 0.25, 0.1), 
+                                new THREE.Vector3(-Math.PI/12, 0, Math.PI/8), movePoints);
+  swordCenter.frame.position.copy(backViewPosition);
+  scene.add(swordCenter.frame);
+  swordCenter.frame.traverse(function (object) {object.visible = false;});
+
+  //background scene
+  backgroundMesh.material.depthTest = false;
+  backgroundMesh.material.depthWrite = false;
+  backgroundScene.add(backgroundCamera);
+  backgroundScene.add(backgroundMesh);
+  backgroundScene.add(new THREE.AmbientLight(0xffffff));
+
+  //add the output of the renderer to the html element
+  $("#scene-div").append(renderer.domElement);
+
+  //bind the event handlers that correspond to the Hidden World
+  hiddenWorldEvents();
+
+  $('.mybtn').click(function () {
+    $(this).blur();
+  });
+
+  //render the scene
+  render();
+}
+//********END FUNCTION DECLARATIONS********//
+
+//********FUNCTION CALLS********//
+drawScene();
+//********END FUNCTION CALLS********//
+
+</script>
+</body>
