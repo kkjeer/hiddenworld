@@ -1,7 +1,6 @@
 /*
 Katherine Kjeer
-CS 307 Final Project: Journey to the Seven Kingdoms
-December 19, 2014
+2014
 utility_functions.js
 Contains material, modeling, rendering, and mathematical functions
   used by multiple other .js files in the project.
