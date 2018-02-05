@@ -38,8 +38,6 @@ var geom = new THREE.TubeRadialGeometry(bezierCurve, 64, radii, 64, false);
 var mat = new THREE.MeshNormalMaterial({size: THREE.DoubleSide});
 var mesh = new THREE.Mesh(geom, mat);
 scene.add(mesh);
-
-You can view the output of the above example at http://cs.wellesley.edu/~cs307/threejs/contrib/
 */
 
 THREE.TubeRadialGeometry = function (path, segments, radius, radialSegments, closed) {
