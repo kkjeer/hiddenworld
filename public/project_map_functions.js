@@ -6,7 +6,6 @@ var texturesLoaded = 0;
 
 //global textured materials (to avoid loading the same texture multiple times)
 //for now, using hardcoded file names to load the textures
-//fix this later
 var mapMaterialGlobal = textureMaterial("parchment.jpg");
 var burlapMaterialGlobal = textureMaterial("burlap.png");
 var qaeoMaterialGlobal = textureMaterial("Qae'o.png");
