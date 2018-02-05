@@ -1,7 +1,6 @@
 /*
 Katherine Kjeer
-CS 307 Final Project: Journey to the Hidden World
-December 19, 2014
+2014
 archery_objects.js
 Contains the modeling, animation, and logic for the game of archery training, 
 	using an object-oriented ArcheryCenter, Bows, Targets, and a Quiver,
