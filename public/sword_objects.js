@@ -1,7 +1,6 @@
 /*
 Katherine Kjeer
-CS 307 Final Project: Journey to the Seven Kingdoms
-December 19, 2014
+2014
 sword_objects.js
 Contains the modeling, animation, and logic for the game of sword training, 
 	using an object-oriented SwordCenter and Swords.
