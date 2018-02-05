@@ -1,7 +1,6 @@
 /*
 Katherine Kjeer
-CS 307 Final Project: Journey to the Hidden World
-December 19, 2014
+2014
 event_handlers.js
 Controls the behavior associated with each key press the user makes during the game
 */
