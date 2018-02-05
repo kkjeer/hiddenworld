@@ -1,7 +1,6 @@
 /*
 Katherine Kjeer
-CS 307 Final Project: Journey to the Seven Kingdoms
-December 19, 2014
+2014
 hidden_world_functions.js
 Creates a three-dimensional model of the Hidden World.
 */
